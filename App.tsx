@@ -5,25 +5,21 @@
  * @format
  */
 
-import React from 'react';
 import type {PropsWithChildren} from 'react';
+import React, {useState} from 'react';
 import {
   SafeAreaView,
-  ScrollView,
   StatusBar,
   StyleSheet,
   Text,
   useColorScheme,
+  useWindowDimensions,
   View,
 } from 'react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import {Image as ExpoImage} from 'expo-image';
+import ImageZoom from 'react-native-image-pan-zoom';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -59,8 +55,13 @@ function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+    flex: 1,
+    backgroundColor: 'yellow',
   };
+
+  const dimensions = useWindowDimensions();
+  const [width, setWidth] = useState(0);
+  const [height, setHeight] = useState(0);
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -68,30 +69,23 @@ function App(): JSX.Element {
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
         backgroundColor={backgroundStyle.backgroundColor}
       />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
+      <ImageZoom
+        cropWidth={dimensions.width}
+        cropHeight={dimensions.height}
+        minScale={0.1}
+        imageWidth={width}
+        imageHeight={height}>
+        <ExpoImage
+          style={styles.image}
+          source={require('./tall_image.jpeg')}
+          contentFit={'contain'}
+          onLoad={event => {
+            console.log(event.source);
+            setWidth(event.source.width);
+            setHeight(event.source.height);
+          }}
+        />
+      </ImageZoom>
     </SafeAreaView>
   );
 }
@@ -112,6 +106,11 @@ const styles = StyleSheet.create({
   },
   highlight: {
     fontWeight: '700',
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'yellow',
   },
 });
 

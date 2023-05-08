@@ -1,7 +1,5 @@
 import React from 'react';
 import {
-  PanGestureHandler,
-  PanGestureHandlerGestureEvent,
   PinchGestureHandler,
   PinchGestureHandlerGestureEvent,
 } from 'react-native-gesture-handler';
@@ -41,40 +39,19 @@ export function PanPinchView({children, maxZoom, minZoom}: PanPinchProps) {
     },
   });
 
-  const panHandler = useAnimatedGestureHandler<
-    PanGestureHandlerGestureEvent,
-    {offsetX: number; offsetY: number}
-  >({
-    onStart: (_, ctx) => {
-      ctx.offsetX = X.value;
-      ctx.offsetY = Y.value;
-    },
-    onActive: (event, ctx) => {
-      X.value = ctx.offsetX + event.translationX;
-      Y.value = ctx.offsetY + event.translationY;
-    },
-  });
-
   const animatedStyles = useAnimatedStyle(() => ({
-    flex: 1,
     transform: [{translateX: X.value}, {translateY: Y.value}, {scale: Z.value}],
   }));
 
   return (
-    <PanGestureHandler
-      onHandlerStateChange={panHandler}
-      onGestureEvent={panHandler}>
-      <Animated.View style={{flex: 1}}>
-        <PinchGestureHandler
-          onHandlerStateChange={pinchHandler}
-          onGestureEvent={pinchHandler}>
-          <Animated.View
-            onMoveShouldSetResponder={() => isIOS}
-            style={animatedStyles}>
-            {children}
-          </Animated.View>
-        </PinchGestureHandler>
+    <PinchGestureHandler
+      onHandlerStateChange={pinchHandler}
+      onGestureEvent={pinchHandler}>
+      <Animated.View
+        onMoveShouldSetResponder={() => isIOS}
+        style={animatedStyles}>
+        {children}
       </Animated.View>
-    </PanGestureHandler>
+    </PinchGestureHandler>
   );
 }

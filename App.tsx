@@ -1,34 +1,29 @@
 import {Image as ExpoImage} from 'expo-image';
 import React, {useState} from 'react';
-import {SafeAreaView, StyleSheet, useWindowDimensions} from 'react-native';
+import {View, useWindowDimensions} from 'react-native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {PanPinchView} from './PanPinchView';
 
 export default function App() {
   const dimensions = useWindowDimensions();
-  const [width, setWidth] = useState(0);
-  const [height, setHeight] = useState(0);
+  const [width, setWidth] = useState(dimensions.width);
+  const [height, setHeight] = useState(dimensions.height);
 
   return (
-    <GestureHandlerRootView style={{flex: 1}}>
-      <SafeAreaView style={{flex: 1, backgroundColor: 'green'}}>
-        <PanPinchView minZoom={1} maxZoom={10}>
+    <GestureHandlerRootView style={{flex: 1, backgroundColor: 'green'}}>
+      <PanPinchView minZoom={0.05} maxZoom={10}>
+        <View style={{flex: 1, alignItems: 'center'}}>
           <ExpoImage
-            style={[
-              styles.image,
-              {width: dimensions.width, height: dimensions.height},
-            ]}
+            style={[{width: width, height: height}]}
+            onLoad={({source}) => {
+              setWidth(source.width);
+              setHeight(source.height);
+            }}
             source={require('./tall_image.jpeg')}
             contentFit={'contain'}
           />
-        </PanPinchView>
-      </SafeAreaView>
+        </View>
+      </PanPinchView>
     </GestureHandlerRootView>
   );
 }
-
-const styles = StyleSheet.create({
-  image: {
-    flex: 1,
-  },
-});

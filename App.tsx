@@ -11,7 +11,7 @@ export default function App() {
 
   return (
     <GestureHandlerRootView style={{flex: 1, backgroundColor: 'green'}}>
-      <PanPinchView minZoom={0.05} maxZoom={10}>
+      <PanPinchView minZoom={0.05} initialZoom={0.05} maxZoom={10}>
         <View style={{flex: 1, alignItems: 'center'}}>
           <ExpoImage
             style={[{width: width, height: height}]}

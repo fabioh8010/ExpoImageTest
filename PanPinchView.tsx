@@ -14,11 +14,17 @@ interface PanPinchProps {
   maxZoom?: number;
   minZoom?: number;
   children: React.ReactNode;
+  initialZoom?: number;
 }
-export function PanPinchView({children, maxZoom, minZoom}: PanPinchProps) {
+export function PanPinchView({
+  children,
+  maxZoom,
+  minZoom,
+  initialZoom,
+}: PanPinchProps) {
   const X = useSharedValue(0);
   const Y = useSharedValue(0);
-  const Z = useSharedValue(1);
+  const Z = useSharedValue(initialZoom ?? 1);
 
   const pinchHandler = useAnimatedGestureHandler<
     PinchGestureHandlerGestureEvent,

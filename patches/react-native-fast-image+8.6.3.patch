@@ -1,5 +1,5 @@
 diff --git a/node_modules/react-native-fast-image/android/src/main/java/com/dylanvann/fastimage/FastImageViewWithUrl.java b/node_modules/react-native-fast-image/android/src/main/java/com/dylanvann/fastimage/FastImageViewWithUrl.java
-index 34fcf89..1b53b57 100644
+index 34fcf89..0ebee8f 100644
 --- a/node_modules/react-native-fast-image/android/src/main/java/com/dylanvann/fastimage/FastImageViewWithUrl.java
 +++ b/node_modules/react-native-fast-image/android/src/main/java/com/dylanvann/fastimage/FastImageViewWithUrl.java
 @@ -142,7 +142,9 @@ class FastImageViewWithUrl extends AppCompatImageView {
@@ -7,7 +7,7 @@ index 34fcf89..1b53b57 100644
                                      .getOptions(context, imageSource, mSource)
                                      .placeholder(mDefaultSource) // show until loaded
 -                                    .fallback(mDefaultSource)); // null will not be treated as error
-+                                    .fallback(mDefaultSource)) // // null will not be treated as error
++                                    .fallback(mDefaultSource)) // null will not be treated as error
 +                            .transform(new ResizeTransformation(8000)); // Apply custom ResizeTransformation with a maximum height of 8000
 +
  

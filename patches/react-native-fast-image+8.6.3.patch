@@ -1,5 +1,5 @@
 diff --git a/node_modules/react-native-fast-image/android/src/main/java/com/dylanvann/fastimage/FastImageViewWithUrl.java b/node_modules/react-native-fast-image/android/src/main/java/com/dylanvann/fastimage/FastImageViewWithUrl.java
-index 34fcf89..0ebee8f 100644
+index 34fcf89..2a8d0bd 100644
 --- a/node_modules/react-native-fast-image/android/src/main/java/com/dylanvann/fastimage/FastImageViewWithUrl.java
 +++ b/node_modules/react-native-fast-image/android/src/main/java/com/dylanvann/fastimage/FastImageViewWithUrl.java
 @@ -142,7 +142,9 @@ class FastImageViewWithUrl extends AppCompatImageView {
@@ -8,17 +8,17 @@ index 34fcf89..0ebee8f 100644
                                      .placeholder(mDefaultSource) // show until loaded
 -                                    .fallback(mDefaultSource)); // null will not be treated as error
 +                                    .fallback(mDefaultSource)) // null will not be treated as error
-+                            .transform(new ResizeTransformation(8000)); // Apply custom ResizeTransformation with a maximum height of 8000
++                            .transform(new ResizeTransformation()); // Apply custom ResizeTransformation with a maximum height of 8000
 +
  
              if (key != null)
                  builder.listener(new FastImageRequestListener(key));
 diff --git a/node_modules/react-native-fast-image/android/src/main/java/com/dylanvann/fastimage/ResizeTransformation.java b/node_modules/react-native-fast-image/android/src/main/java/com/dylanvann/fastimage/ResizeTransformation.java
 new file mode 100644
-index 0000000..56a6e2a
+index 0000000..cd0a5d8
 --- /dev/null
 +++ b/node_modules/react-native-fast-image/android/src/main/java/com/dylanvann/fastimage/ResizeTransformation.java
-@@ -0,0 +1,39 @@
+@@ -0,0 +1,41 @@
 +package com.dylanvann.fastimage;
 +
 +import android.content.Context;
@@ -34,28 +34,30 @@ index 0000000..56a6e2a
 +import java.security.MessageDigest;
 +
 +public class ResizeTransformation implements Transformation<Bitmap> {
-+    private final int targetHeight;
 +
-+    public ResizeTransformation(int targetHeight) {
-+        this.targetHeight = targetHeight;
-+    }
++    private final double MAX_BYTES = 25000000.0;
 +
 +    @NonNull
 +    @Override
 +    public Resource<Bitmap> transform(@NonNull Context context, @NonNull Resource<Bitmap> resource, int outWidth, int outHeight) {
 +        Bitmap toTransform = resource.get();
-+        float scaleFactor = (float) targetHeight / (float) toTransform.getHeight();
-+        int targetWidth = Math.round(toTransform.getWidth() * scaleFactor);
 +
-+        BitmapPool pool = GlideApp.get(context).getBitmapPool();
-+        Bitmap scaledBitmap = Bitmap.createScaledBitmap(toTransform, targetWidth, targetHeight, true);
++        if (toTransform.getByteCount() > MAX_BYTES) {
++            double scaleFactor = Math.sqrt(MAX_BYTES / (double) toTransform.getByteCount());
++            int newHeight = (int) (outHeight * scaleFactor);
++            int newWidth = (int) (outWidth * scaleFactor);
 +
-+        return BitmapResource.obtain(scaledBitmap, pool);
++            BitmapPool pool = GlideApp.get(context).getBitmapPool();
++            Bitmap scaledBitmap =  Bitmap.createScaledBitmap(toTransform, newWidth, newHeight, true);
++            return BitmapResource.obtain(scaledBitmap, pool);
++        }
++
++        return resource;
 +    }
 +
 +    @Override
 +    public void updateDiskCacheKey(@NonNull MessageDigest messageDigest) {
-+        messageDigest.update(("ResizeTransformation" + targetHeight).getBytes());
++        messageDigest.update(("ResizeTransformation").getBytes());
 +    }
 +}
 \ No newline at end of file

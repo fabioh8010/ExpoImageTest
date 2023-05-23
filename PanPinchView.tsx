@@ -8,7 +8,7 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
 } from 'react-native-reanimated';
-import {isIOS} from './utils';
+import { isIOS } from './utils';
 
 interface PanPinchProps {
   maxZoom?: number;
@@ -46,6 +46,7 @@ export function PanPinchView({
   });
 
   const animatedStyles = useAnimatedStyle(() => ({
+    flex: 1,
     transform: [{translateX: X.value}, {translateY: Y.value}, {scale: Z.value}],
   }));
 

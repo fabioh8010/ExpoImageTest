@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Image, View, useWindowDimensions } from 'react-native';
-import FastImage from 'react-native-fast-image';
+import FastImage, { OnLoadEvent } from 'react-native-fast-image';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import ImageZoom from 'react-native-image-pan-zoom';
 import { Zoom } from 'react-native-reanimated-zoom';
@@ -8,7 +8,7 @@ import { PanPinchView } from './PanPinchView';
 import { PanPinchView2 } from './PanPinchView2';
 
 export default function App() {
-  return <ReanimatedZoomFrameworkWithFastImage />;
+  return <ExpensifyCurrentSolution />;
 }
 
 const ReanimatedZoomFrameworkWithFastImage = () => {
@@ -80,7 +80,7 @@ const CustomPanPinch2WithFastImage = () => {
     <GestureHandlerRootView style={{flex: 1, backgroundColor: 'green'}}>
       <PanPinchView2>
         <FastImage
-          style={[{width: '100%', height: '100%'}]}
+          style={[{width, height}]}
           onLoad={e => {
             console.log(e.nativeEvent);
           }}
@@ -90,10 +90,38 @@ const CustomPanPinch2WithFastImage = () => {
     </GestureHandlerRootView>
   );
 };
+
 const ExpensifyCurrentSolution = () => {
   const dimensions = useWindowDimensions();
   const [height, setHeight] = useState(14894);
   const [width, setWidth] = useState(875);
+
+  const configureImageZoom = ({nativeEvent}: OnLoadEvent) => {
+    let imageWidth = nativeEvent.width;
+    let imageHeight = nativeEvent.height;
+
+    console.log(nativeEvent);
+    const containerWidth = Math.round(dimensions.width);
+    const containerHeight = Math.round(dimensions.height);
+
+    const aspectRatio = Math.min(
+      containerHeight / imageHeight,
+      containerWidth / imageWidth,
+    );
+
+    if (imageHeight > imageWidth) {
+      imageHeight *= aspectRatio;
+    } else {
+      imageWidth *= aspectRatio;
+    }
+
+    // Resize the image to max dimensions possible on the Native platforms to prevent crashes on Android. To keep the same behavior, apply to IOS as well.
+    const maxDimensionsScale = 11;
+    imageWidth = Math.min(imageWidth, containerWidth * maxDimensionsScale);
+    imageHeight = Math.min(imageHeight, containerHeight * maxDimensionsScale);
+    setHeight(imageHeight);
+    setWidth(imageWidth);
+  };
 
   return (
     <ImageZoom
@@ -103,11 +131,9 @@ const ExpensifyCurrentSolution = () => {
       imageWidth={width}>
       <FastImage
         style={[{width: width, height: height}]}
-        onLoad={e => {
-          console.log(e.nativeEvent);
-        }}
         source={require('./image-1.jpeg')}
         resizeMode={FastImage.resizeMode.contain}
+        onLoad={configureImageZoom}
       />
     </ImageZoom>
   );

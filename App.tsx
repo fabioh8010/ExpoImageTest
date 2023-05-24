@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
-import { Image, View, useWindowDimensions } from 'react-native';
+import { Image, useWindowDimensions } from 'react-native';
 import FastImage, { OnLoadEvent } from 'react-native-fast-image';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import ImageZoom from 'react-native-image-pan-zoom';
 import { Zoom } from 'react-native-reanimated-zoom';
 import { PanPinchView } from './PanPinchView';
-import { PanPinchView2 } from './PanPinchView2';
 
 export default function App() {
-  return <CustomPanPinch2WithFastImage />;
+  return <CustomPanPinchWithFastImage />;
 }
 
 const ReanimatedZoomFrameworkWithFastImage = () => {
@@ -57,30 +56,11 @@ const CustomPanPinchWithFastImage = () => {
   return (
     <GestureHandlerRootView style={{flex: 1, backgroundColor: 'green'}}>
       <PanPinchView minZoom={0.05} initialZoom={0.05} maxZoom={10}>
-        <View style={{flex: 1, alignItems: 'center'}}>
-          <FastImage
-            style={[{width, height}]}
-            source={require('./image-1.jpeg')}
-          />
-        </View>
-      </PanPinchView>
-    </GestureHandlerRootView>
-  );
-};
-
-const CustomPanPinch2WithFastImage = () => {
-  const dimensions = useWindowDimensions();
-  const [height, setHeight] = useState(14894);
-  const [width, setWidth] = useState(875);
-
-  return (
-    <GestureHandlerRootView style={{flex: 1, backgroundColor: 'green'}}>
-      <PanPinchView2 minZoom={0.05} initialZoom={0.05} maxZoom={10}>
         <FastImage
           style={[{width, height}]}
           source={require('./image-1.jpeg')}
         />
-      </PanPinchView2>
+      </PanPinchView>
     </GestureHandlerRootView>
   );
 };

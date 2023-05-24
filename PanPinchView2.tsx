@@ -1,4 +1,5 @@
 import React from 'react';
+import { StyleSheet } from 'react-native';
 import {
   PanGestureHandler,
   PanGestureHandlerGestureEvent,
@@ -10,17 +11,26 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
 } from 'react-native-reanimated';
-import { isIOS } from './utils';
 
 interface PanPinchProps {
   maxZoom?: number;
   minZoom?: number;
   children: React.ReactNode;
+  initialZoom?: number;
 }
-export function PanPinchView2({children, maxZoom, minZoom}: PanPinchProps) {
+
+export function PanPinchView2({
+  children,
+  maxZoom,
+  minZoom,
+  initialZoom,
+}: PanPinchProps) {
   const X = useSharedValue(0);
   const Y = useSharedValue(0);
-  const Z = useSharedValue(1);
+  const Z = useSharedValue(initialZoom ?? 1);
+
+  const panRef = React.useRef<PanGestureHandler>(null);
+  const pinchRef = React.useRef<PinchGestureHandler>(null);
 
   const pinchHandler = useAnimatedGestureHandler<
     PinchGestureHandlerGestureEvent,
@@ -32,10 +42,10 @@ export function PanPinchView2({children, maxZoom, minZoom}: PanPinchProps) {
     onActive: ({scale: z}, ctx) => {
       const currentZ = ctx.offsetZ * z;
 
-      const maxCondition = maxZoom === undefined ? true : currentZ < maxZoom;
-      const minCondition = minZoom === undefined ? true : currentZ > minZoom;
+      const maxScale = maxZoom === undefined ? true : currentZ > maxZoom;
+      const minScale = minZoom === undefined ? true : currentZ < minZoom;
 
-      if (maxCondition && minCondition) {
+      if (!maxScale && !minScale) {
         Z.value = currentZ;
       }
     },
@@ -61,15 +71,19 @@ export function PanPinchView2({children, maxZoom, minZoom}: PanPinchProps) {
 
   return (
     <PanGestureHandler
-      onHandlerStateChange={panHandler}
-      onGestureEvent={panHandler}>
-      <Animated.View>
+      ref={panRef}
+      simultaneousHandlers={pinchRef}
+      onGestureEvent={panHandler}
+      onHandlerStateChange={panHandler}>
+      <Animated.View style={styles.wrapper}>
         <PinchGestureHandler
-          onHandlerStateChange={pinchHandler}
-          onGestureEvent={pinchHandler}>
+          ref={pinchRef}
+          simultaneousHandlers={panRef}
+          onGestureEvent={pinchHandler}
+          onHandlerStateChange={pinchHandler}>
           <Animated.View
-            onMoveShouldSetResponder={() => isIOS}
-            style={animatedStyles}>
+            collapsable={true}
+            style={[styles.wrapper, animatedStyles]}>
             {children}
           </Animated.View>
         </PinchGestureHandler>
@@ -77,3 +91,9 @@ export function PanPinchView2({children, maxZoom, minZoom}: PanPinchProps) {
     </PanGestureHandler>
   );
 }
+
+const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+  },
+});

@@ -8,7 +8,7 @@ import { PanPinchView } from './PanPinchView';
 import { PanPinchView2 } from './PanPinchView2';
 
 export default function App() {
-  return <ExpensifyCurrentSolution />;
+  return <CustomPanPinch2WithFastImage />;
 }
 
 const ReanimatedZoomFrameworkWithFastImage = () => {
@@ -51,18 +51,15 @@ const ReanimatedZoomWithReactImage = () => {
 
 const CustomPanPinchWithFastImage = () => {
   const dimensions = useWindowDimensions();
-  const [width, setWidth] = useState(875);
   const [height, setHeight] = useState(14894);
+  const [width, setWidth] = useState(875);
 
   return (
     <GestureHandlerRootView style={{flex: 1, backgroundColor: 'green'}}>
       <PanPinchView minZoom={0.05} initialZoom={0.05} maxZoom={10}>
         <View style={{flex: 1, alignItems: 'center'}}>
           <FastImage
-            style={[{width: width, height: height}]}
-            onLoad={e => {
-              console.log(e.nativeEvent);
-            }}
+            style={[{width, height}]}
             source={require('./image-1.jpeg')}
           />
         </View>
@@ -78,12 +75,9 @@ const CustomPanPinch2WithFastImage = () => {
 
   return (
     <GestureHandlerRootView style={{flex: 1, backgroundColor: 'green'}}>
-      <PanPinchView2>
+      <PanPinchView2 minZoom={0.05} initialZoom={0.05} maxZoom={10}>
         <FastImage
           style={[{width, height}]}
-          onLoad={e => {
-            console.log(e.nativeEvent);
-          }}
           source={require('./image-1.jpeg')}
         />
       </PanPinchView2>
@@ -100,7 +94,6 @@ const ExpensifyCurrentSolution = () => {
     let imageWidth = nativeEvent.width;
     let imageHeight = nativeEvent.height;
 
-    console.log(nativeEvent);
     const containerWidth = Math.round(dimensions.width);
     const containerHeight = Math.round(dimensions.height);
 

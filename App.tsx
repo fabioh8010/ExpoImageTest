@@ -54,7 +54,7 @@ const CustomPanPinchWithFastImage = () => {
   const [width, setWidth] = useState(875);
 
   return (
-    <GestureHandlerRootView style={{flex: 1, backgroundColor: 'green'}}>
+    <GestureHandlerRootView style={{flex: 1}}>
       <PanPinchView minZoom={0.05} initialZoom={0.05} maxZoom={10}>
         <FastImage
           style={[{width, height}]}

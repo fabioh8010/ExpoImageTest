@@ -14,7 +14,7 @@
     "expo": "^48.0.0",
     "react": "18.2.0",
     "react-native": "0.71.7",
-    "react-native-fast-image": "^8.6.3",
+    "react-native-fast-image": "git+https://github.com/Expensify/react-native-fast-image.git#68244e9b7be284984b0fe7e9133d98972b1f5950",
     "react-native-gesture-handler": "^2.9.0",
     "react-native-image-pan-zoom": "^2.1.12",
     "react-native-reanimated": "^2.10.0",
